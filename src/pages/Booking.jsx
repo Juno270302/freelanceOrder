@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebase"; // Firebase Auth import
 import { getDoc, doc, setDoc, collection } from "firebase/firestore"; // Firestore import
 import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 const Booking = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const Booking = () => {
     numberOfPeople: "",
   });
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch user contact info from Firestore
   useEffect(() => {
@@ -57,11 +59,14 @@ const Booking = () => {
     try {
       // Save the form data to Firestore
       const bookingsCollection = collection(db, "bookings"); // Your Firestore collection for bookings
-      await setDoc(doc(bookingsCollection), { // Use addDoc(bookingsCollection, formData) to auto-generate ID
+      await setDoc(doc(bookingsCollection), {
+        // Use addDoc(bookingsCollection, formData) to auto-generate ID
         ...formData,
         createdAt: new Date(), // Optionally, add a timestamp
       });
       console.log("Booking submitted:", formData);
+      navigate("/");
+
       // Reset form after submission
       setFormData({
         customerName: "",

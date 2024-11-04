@@ -16,6 +16,16 @@ import Order from "./pages/Order";
 import Register from "./pages/Account/Register";
 import Dashboard from "./pages/Dashboard";
 import ThankYou from "./pages/ThankYou";
+import MgOrder from "./pages/dashboard/MgOrder";
+import MgCategory from "./pages/dashboard/MgCategory";
+import MgMenu from "./pages/dashboard/MgMenu";
+import MgUser from "./pages/dashboard/MgUser";
+import MgBooking from "./pages/dashboard/MgBooking";
+import Chef from "./pages/Chef";
+import Dish from "./pages/chef/Dish";
+import Deliver from "./pages/staff/Deliver";
+import Staff from "./pages/Staff";
+import StaffBooking from "./pages/staff/StaffBooking";
 
 const App = () => {
   const location = useLocation();
@@ -24,6 +34,8 @@ const App = () => {
   const shouldShowNavbar =
     !location.pathname.startsWith("/order") &&
     !location.pathname.startsWith("/dashboard") &&
+    !location.pathname.startsWith("/chef") &&
+    !location.pathname.startsWith("/staff") &&
     !location.pathname.startsWith("/thankyou");
 
   return (
@@ -35,9 +47,26 @@ const App = () => {
         <Route path="/booking" element={<Booking />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/order/:tableNumber" element={<Order />} />
         <Route path="/thankyou" element={<ThankYou />} />
+
+        <Route path="/dashboard" element={<Dashboard />}>
+          <Route index element={<MgOrder />} />
+          <Route path="category" element={<MgCategory />} />
+          <Route path="menu" element={<MgMenu />} />
+          <Route path="user" element={<MgUser />} />
+          <Route path="booking" element={<MgBooking />} />
+        </Route>
+
+        <Route path="/chef" element={<Chef />}>
+          <Route index element={<Dish />} />
+        </Route>
+
+        <Route path="/staff" element={<Staff />}>
+          <Route index element={<Deliver />} />
+          <Route path="booking" element={<StaffBooking />} />
+        </Route>
       </Routes>
     </>
   );

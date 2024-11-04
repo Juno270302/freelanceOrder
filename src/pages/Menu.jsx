@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { getFirestore, collection, getDocs } from "firebase/firestore"; // Import necessary Firebase modules
 
 const Menu = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Lẩu");
+  const [selectedCategory, setSelectedCategory] = useState("Thịt heo");
   const [dishes, setDishes] = useState({}); // State to hold dishes data
   const [categories, setCategories] = useState([]); // State to hold categories data
-  console.log(dishes);
 
   useEffect(() => {
     const fetchData = async () => {

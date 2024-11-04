@@ -1,7 +1,66 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 const Home = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const db = getFirestore();
+
+  useEffect(() => {
+    const checkUserRole = async (user) => {
+      try {
+        // Get the user's document from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Check user's role and navigate accordingly
+          switch (userData.role) {
+            case "admin":
+              navigate("/dashboard");
+              break;
+            case "chef":
+              navigate("/chef");
+              break;
+            case "staff":
+              navigate("/staff");
+              break;
+            case "user":
+              navigate("/");
+              break;
+            default:
+              navigate("/not-authorized"); // For any other roles
+              break;
+          }
+        } else {
+          console.error("User document not found");
+        }
+      } catch (err) {
+        setError("Error fetching user data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        checkUserRole(user);
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [auth, db, navigate]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
   return (
     <div className="home-container">
       {/* Banner */}

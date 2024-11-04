@@ -15,12 +15,13 @@ const Order = () => {
   const [dishes, setDishes] = useState({});
   const [userName, setUserName] = useState(""); // State to store user name
   const [loading, setLoading] = useState(true); // State to manage loading
+  const [idUser, setIdUser] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        setIdUser(user.uid);
         const docRef = doc(db, "users", user.uid); // Use user's uid to fetch their document
-
         getDoc(docRef)
           .then((doc) => {
             if (doc.exists()) {
@@ -203,6 +204,7 @@ const Order = () => {
         updateQuantity={updateQuantity}
         tableNumber={tableNumber}
         infoGuess={userName}
+        idUser={idUser}
       />
     </div>
   );

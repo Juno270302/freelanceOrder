@@ -1,4 +1,11 @@
-import { collection, addDoc } from "firebase/firestore"; // Import Firestore methods
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  arrayUnion,
+  increment,
+  doc,
+} from "firebase/firestore"; // Import Firestore methods
 import React from "react";
 import { db } from "../firebase"; // Import your firebase configuration
 import { useNavigate } from "react-router-dom";
@@ -10,6 +17,7 @@ const Bill = ({
   updateQuantity,
   tableNumber,
   infoGuess,
+  idUser,
 }) => {
   if (!isOpen) return null; // Không hiển thị nếu modal không mở
   const formattedTableNumber = tableNumber.replace(/-/g, " ");
@@ -35,20 +43,40 @@ const Bill = ({
       items: cartItems,
       totalAmount: totalAmount,
       tableNumber: formattedTableNumber,
-      guess: infoGuess,
+      guess: infoGuess || "none",
       createdAt: new Date(),
+      isDeliver: false,
     };
 
     try {
       // Save the bill to Firestore
-      await addDoc(collection(db, "bills"), billData);
-      console.log("Bill saved successfully!");
+      const billDocRef = await addDoc(collection(db, "bills"), billData);
+      console.log("Bill saved successfully!", billDocRef.id);
+
+      // Prepare order data to add to the user's document
+      const orderData = {
+        orderId: billDocRef.id,
+        ...billData,
+      };
+
+      if (idUser) {
+        // Update the user's document with the new order
+        const userId = idUser; // Replace with actual user ID
+        const userDocRef = doc(db, "users", userId);
+
+        // Update user document to include the new order and increment totalOrders
+        await updateDoc(userDocRef, {
+          totalOrders: increment(1), // Increment the totalOrders by 1
+        });
+
+        console.log("Order added to user successfully!");
+      }
 
       // Close the modal or perform other actions
       onClose();
       navigate("/thankyou");
     } catch (error) {
-      console.error("Error saving bill:", error);
+      console.error("Error saving bill or updating user:", error);
     }
   };
 
@@ -112,7 +140,7 @@ const Bill = ({
               type="submit"
               className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
             >
-              Tính tiền
+              Đặt Món
             </button>
           </form>
         </div>

@@ -109,18 +109,7 @@ const Navbar = () => {
               >
                 Logouts
               </button>
-              <button
-                onClick={handleSignOut}
-                className=" text-[22px] hover:text-[#F9A746] font-mont-bold hover:cursor-pointer "
-              >
-                Logouts
-              </button>
-              <button
-                onClick={handleSignOut}
-                className=" text-[22px] hover:text-[#F9A746] font-mont-bold hover:cursor-pointer "
-              >
-                Logouts
-              </button>
+              
             </div>
           ) : (
             ""
